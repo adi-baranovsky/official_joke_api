@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import "./App.css";
 
 const API_URL = "http://localhost:3005"; // URL of the API
 
@@ -10,6 +11,7 @@ function App() {
 
   // Fetch the joke types from the API
   useEffect(() => {
+    document.title = "Jokes4U"; //title
     axios.get(`${API_URL}/types`)
       .then(response => setJokeTypes(response.data))
       .catch(error => console.error("Error fetching joke types:", error));
@@ -21,13 +23,11 @@ function App() {
     for (const type of types) {
       try {
         const response = await axios.get(`${API_URL}/jokes/${type}/ten`);
-        allJokes.push(...response.data); // Add jokes to the list
+        allJokes.push(...response.data);
       } catch (error) {
         console.error(`Error fetching jokes for type ${type}:`, error);
       }
     }
-
-    // We only want 10 jokes, so slice to the first 10
     setJokes(allJokes.slice(0, 10)); // Keep only 10 jokes in total
   };
 
@@ -35,88 +35,74 @@ function App() {
   const handleTypeSelection = (type) => {
     setSelectedTypes(prevSelectedTypes => {
       const newSelectedTypes = prevSelectedTypes.includes(type)
-        ? prevSelectedTypes.filter(selectedType => selectedType !== type) // Remove if already selected
-        : [...prevSelectedTypes, type]; // Add if not selected
-      fetchJokes(newSelectedTypes); // Fetch jokes again with updated types
+        ? prevSelectedTypes.filter(selectedType => selectedType !== type)
+        : [...prevSelectedTypes, type];
+      fetchJokes(newSelectedTypes);
       return newSelectedTypes;
     });
   };
 
-  // Function to replace a specific joke with a random one from the API
+  // Replace a joke with a random one
   const replaceJoke = (jokeId) => {
     axios.get(`${API_URL}/random_joke`)
       .then(response => {
-        // Update the jokes array by replacing the joke with the matching id
-        setJokes(prevJokes => {
-          const updatedJokes = prevJokes.map(joke =>
-            joke.id === jokeId ? { ...joke, setup: response.data.setup, punchline: response.data.punchline } : joke
-          );
-          return updatedJokes;
-        });
+        setJokes(prevJokes => prevJokes.map(joke =>
+          joke.id === jokeId ? { ...joke, setup: response.data.setup, punchline: response.data.punchline } : joke
+        ));
       })
       .catch(error => console.error("Error replacing joke:", error));
   };
 
-  // Function to replace a specific joke with a new one from the same category
+  // Replace a joke with another from the same category
   const replaceJokeInCategory = (jokeId, type) => {
-    console.log(`Replacing joke from category ${type}...`); // Added for debugging
-    axios.get(`${API_URL}/jokes/${type}/random`) // Getting a random joke from the same category
+    console.log(`Replacing joke from category ${type}...`);
+    axios.get(`${API_URL}/jokes/${type}/random`)
       .then(response => {
-        // Checking if we received an array and extracting the first item
-        const newJoke = response.data && response.data[0]; // We expect the new joke to be the first item in the array
-        console.log("Received new joke:", newJoke); // Log the new joke
+        const newJoke = response.data && response.data[0];
+        console.log("Received new joke:", newJoke);
 
         if (newJoke) {
-          setJokes(prevJokes => {
-            // Find the joke we want to replace and update it
-            return prevJokes.map(joke => 
-              joke.id === jokeId
-                ? { ...joke, setup: newJoke.setup, punchline: newJoke.punchline } // Update only the matching joke
-                : joke // Keep other jokes unchanged
-            );
-          });
+          setJokes(prevJokes => prevJokes.map(joke =>
+            joke.id === jokeId
+              ? { ...joke, setup: newJoke.setup, punchline: newJoke.punchline }
+              : joke
+          ));
         } else {
           console.error("No joke found in the category");
         }
       })
-      .catch(error => {
-        console.error("Error replacing joke in category:", error);
-      });
+      .catch(error => console.error("Error replacing joke in category:", error));
   };
 
   return (
-    <div>
+    <div className="app-container">
       <h1>Select joke categories</h1>
-      <div>
-        {/* Render buttons for each joke type */}
+      <div className="categories-container">
         {jokeTypes.map(type => (
           <button
             key={type}
             onClick={() => handleTypeSelection(type)}
-            style={{
-              backgroundColor: selectedTypes.includes(type) ? "green" : "lightgray"
-            }}
+            className={`category-btn ${selectedTypes.includes(type) ? "selected" : ""}`}
           >
             {type}
           </button>
         ))}
       </div>
-
-      {/* Display jokes when types are selected */}
+  
       {selectedTypes.length > 0 && (
-        <div>
-          <h2>Jokes from selected categories:</h2>
-          <ul>
-            {/* Render jokes with unique keys based on their id */}
+        <div className="jokes-section">
+          <div className="jokes-container">
             {jokes.map(joke => (
-              <li key={joke.id}>
-                {joke.setup} - {joke.punchline}
-                <br />
-                <button onClick={() => replaceJoke(joke.id)}>Replace with random joke</button>
-                <button onClick={() => replaceJokeInCategory(joke.id, joke.type)}>Replace with joke from the same category</button>
-              </li>
+              <div key={joke.id} className="joke-card">
+                <p className="joke-text">{joke.setup}</p>
+                <span className="joke-punchline">{joke.punchline}</span>
+                <div className="joke-actions">
+                  <button className="replace-btn" onClick={() => replaceJoke(joke.id)}>Random Joke</button>
+                  <button className="replace-btn" onClick={() => replaceJokeInCategory(joke.id, joke.type)}>Same Category</button>
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
     </div>

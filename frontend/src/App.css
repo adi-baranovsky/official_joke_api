@@ -1,38 +1,136 @@
-.App {
+/* General styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Main Container */
+.app-container {
+  padding: 40px 20px; /* Increased padding for more space around the page */
+  max-width: 1200px; /* Make the main container wider */
+  margin: 0 auto;
+  text-align: center;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* Categories */
+.categories-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 30px; /* Increased margin to separate from jokes */
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.category-btn {
+  background: #a3d5ff;
+  color: #333;
+  border: none;
+  padding: 15px 22px; /* More padding for better touch area */
+  border-radius: 10px; /* Rounder corners */
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  font-weight: bold;
+  font-size: 18px; /* Slightly larger text */
+}
+
+.category-btn.selected {
+  background: #63b1fa;
+}
+
+.category-btn:hover {
+  background: #90c7ff;
+  transform: scale(1.05);
+}
+
+/* Jokes Section */
+.jokes-section {
+  margin-top: 40px; /* More space before jokes */
+}
+
+/* Jokes Grid */
+.jokes-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 columns */
+  gap: 30px; /* Increased gap between the joke cards */
+  justify-content: center;
+  align-items: start;
+  max-width: 100%; /* Ensure it fills the width */
+  margin: 0 auto;
+}
+
+/* Each joke box */
+.joke-card {
+  background: #fff;
+  padding: 20px; /* More padding inside the box */
+  border-radius: 10px; /* Rounder corners */
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1); /* Bigger shadow for a spacious look */
+  text-align: center;
+  height: 280px; /* Increased height for more space */
+  width: 260px; /* Slightly wider boxes */
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: space-between;
+  overflow: hidden;
+  font-family: 'Arial', sans-serif; /* Same font for setup and punchline */
 }
 
-.App-link {
-  color: #61dafb;
+/* Joke text */
+.joke-text {
+  font-size: 20px; /* Slightly larger font size for the joke setup */
+  font-weight: bold;
+  color: #444;
+  margin-bottom: 15px; /* Space between setup and punchline */
+  line-height: 1.4; /* Increased line height for more spacious text */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Punchline styling */
+.joke-punchline {
+  display: block; /* Punchline will be right under the setup */
+  font-size: 18px; /* Same font size as the setup, but a bit smaller */
+  color: #555;
+  margin-top: 10px; /* Added margin to separate from the setup */
+  line-height: 1.4; /* Same line height for consistency */
+}
+
+/* Button Container */
+.joke-actions {
+  display: flex;
+  flex-direction: column; /* Stack buttons */
+  gap: 12px; /* More space between buttons */
+  margin-top: auto; /* Push the buttons towards the bottom of the card */
+}
+
+/* Replace buttons */
+.replace-btn {
+  background: #d5a3ff;
+  color: #333;
+  border: none;
+  padding: 12px 18px; /* Increased padding for better button size */
+  border-radius: 10px; /* Rounded corners for buttons */
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  font-weight: bold;
+  font-size: 16px; /* Larger text in buttons */
+}
+
+.replace-btn:hover {
+  background: #c07dff;
+  transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .jokes-container {
+    grid-template-columns: 1fr; /* One column on small screens */
   }
-  to {
-    transform: rotate(360deg);
+
+  /* Make buttons and text a bit larger on mobile */
+  .category-btn, .replace-btn {
+    font-size: 18px;
   }
 }
